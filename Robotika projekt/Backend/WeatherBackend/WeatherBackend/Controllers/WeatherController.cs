@@ -1,5 +1,7 @@
 ﻿using WeatherBackend.Models;
 using Microsoft.AspNetCore.Mvc;
+using WeatherBackend.Data;
+using System.ComponentModel.DataAnnotations;
 
 namespace WeatherBackend.Controllers
 {
@@ -8,13 +10,20 @@ namespace WeatherBackend.Controllers
     public class WeatherController : ControllerBase
     {
         [HttpPost]
-        public IActionResult Post([FromBody] WeatherData data)
+
+        public async Task<IActionResult> Post([FromBody] WeatherData data)
         {
-            Console.WriteLine($"Temp: {data.Tempature}, Humidity: {data.Humidity}, Pressure: {data.Pressure}");
+            _context.WeatherEntries.Add(data);
+            await  _context.SaveChangesAsync();
+
+            Console.WriteLine($"Temp: {data.Temperature}, Humidity: {data.Humidity}, Pressure: {data.Pressure}");
             return Ok(new { status = "recived"});
         }
-       
 
-
+        private readonly WeatherDbContext _context;
+        public WeatherController(WeatherDbContext context)
+        {
+            _context = context;
+        }
     }
 }

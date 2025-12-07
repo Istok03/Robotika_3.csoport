@@ -1,4 +1,7 @@
 
+using Microsoft.EntityFrameworkCore;
+using WeatherBackend.Data;
+
 namespace WeatherBackend
 {
     public class Program
@@ -13,6 +16,9 @@ namespace WeatherBackend
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+            builder.Services.AddDbContext<WeatherDbContext>(options => 
+                options.UseSqlite("Data Source=weather.db"));
+          
 
             var app = builder.Build();
 
