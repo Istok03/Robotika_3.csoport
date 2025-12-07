@@ -10,6 +10,7 @@ namespace WeatherBackend.Models
         public int Id { get; set; }
 
         [Range(-50,60)]
+        [Required]
         public float Temperature { get; set; }
         
         [Range(0,100)]
@@ -18,6 +19,7 @@ namespace WeatherBackend.Models
         [Range(900,1100)]
         public float Pressure { get; set; }
 
+      
 
     }
 }

@@ -25,5 +25,15 @@ namespace WeatherBackend.Controllers
         {
             _context = context;
         }
+
+
+        [HttpGet]
+
+        public async Task<IActionResult> GetAll()
+        {
+            var entries = await _context.WeatherEntries.ToListAsync();
+            return Ok(entries);
+        }
+
     }
 }
