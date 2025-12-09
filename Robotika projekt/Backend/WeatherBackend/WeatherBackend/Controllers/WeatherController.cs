@@ -1,7 +1,7 @@
 ﻿using WeatherBackend.Models;
 using Microsoft.AspNetCore.Mvc;
 using WeatherBackend.Data;
-using System.ComponentModel.DataAnnotations;
+using Microsoft.EntityFrameworkCore;
 
 namespace WeatherBackend.Controllers
 {
@@ -20,14 +20,16 @@ namespace WeatherBackend.Controllers
             return Ok(new { status = "recived"});
         }
 
+
         private readonly WeatherDbContext _context;
         public WeatherController(WeatherDbContext context)
         {
             _context = context;
         }
 
-
         [HttpGet]
+
+       
 
         public async Task<IActionResult> GetAll()
         {
