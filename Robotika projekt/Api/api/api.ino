@@ -21,6 +21,26 @@ unsigned long lastSendTime = 0;
 const int MAX_SENSOR_RETRIES = 3; // Max. próbálkozások száma a szenzorolvasáshoz
 const int RETRY_DELAY_MS = 2000;  // Késleltetés az újrapróbálkozások között
 
+void ensureWiFiConnection() {
+  if (WiFi.status() == WL_CONNECTED) {
+    return;
+  }
+
+  Serial.println("WiFi kapcsolódás folyamatban...");
+  
+  // Ha esetleg beragadt volna
+  WiFi.disconnect(); 
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(1000);
+    Serial.print(".");
+  }
+  
+  Serial.println("\nWiFi sikeresen csatlakozva!");
+  Serial.println(WiFi.localIP());
+}
+
 void setup() {
   Serial.begin(115200);
   delay(100);
@@ -35,16 +55,8 @@ void setup() {
   }
   
   // WiFi csatlakozás
-  Serial.print("Csatlakozás WiFi-hez (");
-  Serial.print(WIFI_SSID);
-  Serial.println(")...");
-  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1000);
-    Serial.print(".");
-  }
-  Serial.println("\nWiFi csatlakozva! IP: ");
-  Serial.println(WiFi.localIP());
+  // WiFi csatlakozás
+  ensureWiFiConnection();
 }
 
 bool readAndValidateSensors(float &temperature, float &humidity, float &pressure) {
@@ -81,11 +93,8 @@ bool readAndValidateSensors(float &temperature, float &humidity, float &pressure
 }
 
 void sendData(float temperature, float humidity, float pressure) {
-  if (WiFi.status() != WL_CONNECTED) {
-    Serial.println("Hiba: Nincs WiFi kapcsolat! Újrapróbálkozás...");
-    // Ide lehetne tenni egy újraindítási logikát
-    return;
-  }
+  // WiFi megerősítése küldés előtt
+  ensureWiFiConnection();
   
   // JSON létrehozása
   StaticJsonDocument<200> doc;
