@@ -19,7 +19,8 @@ namespace WeatherBackend.Models
         [Range(900,1100)]
         public float Pressure { get; set; }
 
-      
+        public DateTime Timestamp { get; set; } = DateTime.UtcNow;
+
 
     }
 }
