@@ -7,9 +7,9 @@
 #include <Adafruit_Sensor.h>
 
 // WiFi adatok (cseréld ki a saját adataidra!)
-const char* WIFI_SSID = "Deco";
-const char* WIFI_PASSWORD = "19690324";
-const char* SERVER_URL = "http://192.168.0.14:5000/api/weather"; 
+const char* WIFI_SSID = "asd";
+const char* WIFI_PASSWORD = "asd";
+const char* SERVER_URL = "http://asd:5000/api/weather"; 
 
 // Szenzorok
 //DHT dht(D2, DHT11); // DHT D2 pin, típus: DHT11 (vagy DHT22)
