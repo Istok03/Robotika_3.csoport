@@ -1,12 +1,13 @@
 # 🌦️ WeatherBackend – IoT Időjárás REST API
 
-Ez a projekt egy ASP.NET Core Web API, amely fogadja az ESP8266 által küldött időjárási adatokat (hőmérséklet, páratartalom, légnyomás), és válaszként visszajelez, hogy az adatokat sikeresen fogadta.
+Ez a projekt egy ASP.NET Core Web API, amely fogadja az ESP8266 által küldött időjárási adatokat (hőmérséklet, páratartalom, légnyomás), és válaszként visszajelez, hogy az adatokat sikeresen fogadta. Ezeket kimenti egy adatbázisba, amit a swagger teszten keresztül ki is lehet menteni egy adatbázisba.
 
 ## 📌 API végpont
 
 ### POST `/api/weather`
 
 Fogadja az ESP8266 által küldött JSON adatokat.
+Ki is lehet menteni egy .csv file-ba.
 
 ## 🧰 Szükséges fizikai eszközök
 
@@ -16,7 +17,7 @@ A projekt működéséhez az alábbi hardverelemekre van szükség:
 |-----------------------------|----------------------------------------------------------------------------------|
 | **ESP8266 (pl. NodeMCU)**   | Mikrovezérlő WiFi kapcsolattal, amely a szenzoradatokat gyűjti és továbbítja az API-nak |
 | **DHT11 vagy DHT22 szenzor**| Hőmérséklet és páratartalom mérésére szolgáló digitális szenzor                 |
-| **Adafruit BMP180 vagy BMP085 szenzor** | Légnyomás mérésére alkalmas szenzor (I2C kommunikációval)             |
+| **Adafruit BME/BPM280 szenzor** | Légnyomás mérésére alkalmas szenzor (I2C kommunikációval)             |
 | **USB kábel (micro USB)**   | Az ESP8266 programozásához és tápellátásához szükséges                          |
 | **Breadboard (próbatábla)** | Az áramkör összekötéséhez forrasztás nélkül                                     |
 | **Jumper kábelek (male-male)** | A szenzorok és az ESP8266 összekötéséhez                                     |
