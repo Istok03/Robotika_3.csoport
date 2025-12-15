@@ -6,14 +6,25 @@
 #include <Adafruit_BME280.h>
 #include <Adafruit_Sensor.h>
 
+
+
 // WiFi adatok (cseréld ki a saját adataidra!)
-const char* WIFI_SSID = "asd";
-const char* WIFI_PASSWORD = "asd";
+const char* WIFI_SSID = "Sajat wifinev";
+const char* WIFI_PASSWORD = "kod";
 const char* SERVER_URL = "http://asd:5000/api/weather"; 
 
 // Szenzorok
 //DHT dht(D2, DHT11); // DHT D2 pin, típus: DHT11 (vagy DHT22)
 Adafruit_BME280 bme;
+
+//lcd
+#define USE_LCD true 
+
+#if USE_LCD 
+#include <LiquidCrystal_I2C.h>
+LiquidCrystal_I2C lcd(0x27, 16, 2); // I2C cím lehet 0x27 vagy 0x3F
+#endif
+
 
 // Időzítés
 const unsigned long SEND_INTERVAL = 10000; // 10 másodpercenként küld adatot
@@ -54,6 +65,16 @@ void setup() {
   } 
   else {
   Serial.println("BME280 szenzor OK.");
+
+//lcd 
+  #if USE_LCD
+  lcd.init();
+  lcd.backlight();
+  lcd.setCursor(0, 0);
+  lcd.print("Weather Ready");
+#endif
+
+
 }
  
   // WiFi csatlakozás
@@ -131,9 +152,25 @@ void loop() {
     if (readAndValidateSensors(temperature, humidity, pressure)) {
       // 2. Küldés, ha az olvasás sikeres volt
       sendData(temperature, humidity, pressure);
+        #if USE_LCD
+        lcd.clear();
+        lcd.setCursor(0, 0);
+        lcd.print("T:");
+        lcd.print(temperature, 1);
+        lcd.print("C H:");
+        lcd.print(humidity, 0);
+
+        lcd.setCursor(0, 1);
+        lcd.print("P:");
+        lcd.print(pressure, 0);
+        lcd.print(" hPa");
+        #endif
+
+
     }
     
   }
+ 
 
   // Megjegyzés: ide kerülhetne más, nem blokkoló feladat, pl. kijelző frissítése
 }
