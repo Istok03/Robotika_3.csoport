@@ -2,16 +2,18 @@
 #include <ESP8266HTTPClient.h>
 #include <ArduinoJson.h>
 #include <DHT.h>
-#include <Adafruit_BMP085.h>
+#include <Wire.h>
+#include <Adafruit_BME280.h>
+#include <Adafruit_Sensor.h>
 
 // WiFi adatok (cseréld ki a saját adataidra!)
-const char* WIFI_SSID = "WIFI_NEV";
-const char* WIFI_PASSWORD = "WIFI_JELSZO";
-const char* SERVER_URL = "http://192.168.1.100:5000/api/weather"; 
+const char* WIFI_SSID = "asd";
+const char* WIFI_PASSWORD = "asd";
+const char* SERVER_URL = "http://asd:5000/api/weather"; 
 
 // Szenzorok
-DHT dht(D2, DHT11); // DHT D2 pin, típus: DHT11 (vagy DHT22)
-Adafruit_BMP085 bmp;
+//DHT dht(D2, DHT11); // DHT D2 pin, típus: DHT11 (vagy DHT22)
+Adafruit_BME280 bme;
 
 // Időzítés
 const unsigned long SEND_INTERVAL = 10000; // 10 másodpercenként küld adatot
@@ -46,14 +48,14 @@ void setup() {
   delay(100);
   
   // Szenzorok indítása
-  dht.begin();
-  if (!bmp.begin()) {
-    Serial.println("Hiba: BMP szenzor inicializálás sikertelen!");
-    // Itt leállíthatod a programot, vagy folytathatod a hibás szenzor nélkül
-  } else {
-    Serial.println("BMP szenzor OK.");
-  }
-  
+
+  if (!bme.begin(0x76)) { // vagy 0x77, ha nem működik
+    Serial.println("Hiba: BMP280 szenzor nem található!");
+  } 
+  else {
+  Serial.println("BME280 szenzor OK.");
+}
+ 
   // WiFi csatlakozás
   // WiFi csatlakozás
   ensureWiFiConnection();
@@ -68,9 +70,9 @@ bool readAndValidateSensors(float &temperature, float &humidity, float &pressure
     Serial.println(")");
 
     // Adatok beolvasása
-    temperature = dht.readTemperature();
-    humidity = dht.readHumidity();
-    pressure = bmp.readPressure() / 100.0; // Pa -> hPa
+    temperature = bme.readTemperature();
+    humidity = bme.readHumidity();
+    pressure = bme.readPressure() / 100.0; // Pa -> hPa
 
     // Ellenőrzés NaN ellen: Ha MINDEN adat érvényes, sikeres az olvasás
     if (!isnan(temperature) && !isnan(humidity) && !isnan(pressure)) {
@@ -93,37 +95,26 @@ bool readAndValidateSensors(float &temperature, float &humidity, float &pressure
 }
 
 void sendData(float temperature, float humidity, float pressure) {
-  // WiFi megerősítése küldés előtt
-  ensureWiFiConnection();
-  
-  // JSON létrehozása
+  WiFiClient client;
+  HTTPClient http;
+
+  http.begin(client, SERVER_URL);
+  http.addHeader("Content-Type", "application/json");
+
   StaticJsonDocument<200> doc;
+  doc["id"] = 0;
   doc["temperature"] = temperature;
   doc["humidity"] = humidity;
   doc["pressure"] = pressure;
 
-  String jsonPayload;
-  serializeJson(doc, jsonPayload);
-  
-  Serial.print("JSON küldése: ");
-  Serial.println(jsonPayload);
+  String requestBody;
+  serializeJson(doc, requestBody);
 
-  // HTTP POST küldése
-  HTTPClient http;
-  
-  http.begin(SERVER_URL); 
-  http.addHeader("Content-Type", "application/json");
+  int httpResponseCode = http.POST(requestBody);
 
-  int httpResponseCode = http.POST(jsonPayload);
-  
-  if (httpResponseCode > 0) {
-    Serial.print("HTTP válaszkód: ");
-    Serial.println(httpResponseCode);
-  } else {
-    Serial.print("HTTP hiba: ");
-    Serial.println(httpResponseCode);
-  }
-  
+  Serial.print("HTTP válaszkód: ");
+  Serial.println(httpResponseCode);
+
   http.end();
 }
 
