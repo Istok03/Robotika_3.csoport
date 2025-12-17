@@ -9,9 +9,9 @@
 
 
 // WiFi adatok (cseréld ki a saját adataidra!)
-const char* WIFI_SSID = "Sajat wifinev";
-const char* WIFI_PASSWORD = "kod";
-const char* SERVER_URL = "http://asd:5000/api/weather"; 
+const char* WIFI_SSID = "Kristóf iPhone-ja";
+const char* WIFI_PASSWORD = "20030208";
+const char* SERVER_URL = "http://172.20.10.2:5000/api/weather"; 
 
 // Szenzorok
 //DHT dht(D2, DHT11); // DHT D2 pin, típus: DHT11 (vagy DHT22)
